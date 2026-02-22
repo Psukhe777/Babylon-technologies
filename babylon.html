@@ -1,0 +1,690 @@
+DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Babylon Technologies — Venture Studio</title>
+  <meta name="description" content="Babylon Technologies. Building 6 production-grade AI products in 60 days. No fluff. Just code." />
+  <meta property="og:title" content="Babylon Technologies" />
+  <meta property="og:description" content="6 startups. 60 days. Building in public." />
+  <meta property="og:url" content="https://babylontech.org" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --black:   #060608;
+      --white:   #f5f3ee;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --dim:     #3a3830;
+      --muted:   #7a7060;
+      --card-bg: #0d0c0a;
+      --border:  #1e1c18;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Mono', monospace;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom Cursor ── */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease, width 0.3s ease, height 0.3s ease, opacity 0.4s ease;
+      opacity: 0.5;
+    }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.032;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 3rem;
+      z-index: 100;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s;
+    }
+    nav.scrolled {
+      border-color: var(--border);
+      background: rgba(6,6,8,0.92);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-status {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .pulse-dot {
+      width: 5px; height: 5px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 3rem 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,168,76,0.04) 0%, transparent 50%);
+    }
+
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 100%, black 0%, transparent 70%);
+      opacity: 0.4;
+    }
+
+    .hero-counter {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero-headline {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.35s forwards;
+    }
+    .hero-headline em {
+      font-style: normal;
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero-sub {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.55s forwards;
+    }
+    .hero-desc {
+      font-size: 0.85rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 380px;
+    }
+    .hero-cta {
+      display: flex; gap: 1rem; flex-shrink: 0;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--black);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      cursor: none;
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      padding: 0.9rem 2rem;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+      cursor: none;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Ticker ── */
+    .ticker-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 0.9rem 0;
+      background: var(--card-bg);
+    }
+    .ticker {
+      display: flex; gap: 4rem;
+      animation: ticker 20s linear infinite;
+      width: max-content;
+    }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker-item {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      white-space: nowrap;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .ticker-item::before { content: '◆'; color: var(--gold); font-size: 0.4rem; }
+
+    /* ── Section ── */
+    section {
+      padding: 7rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    /* ── Sprint / Active product ── */
+    .sprint-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+
+    .sprint-main {
+      background: var(--card-bg);
+      padding: 3rem;
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .sprint-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 0.3rem 0.8rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sprint-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .sprint-desc {
+      font-size: 0.8rem;
+      line-height: 1.9;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .sprint-links {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+    }
+
+    .sprint-meta {
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+
+    .meta-item { border-left: 2px solid var(--dim); padding-left: 1.2rem; }
+    .meta-label { font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.3rem; }
+    .meta-value { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--white); }
+    .meta-value.gold { color: var(--gold); }
+
+    /* Risk gauge */
+    .gauge-wrap { margin-top: 1rem; }
+    .gauge-bar {
+      height: 3px;
+      background: var(--dim);
+      border-radius: 2px;
+      margin-top: 0.4rem;
+      overflow: hidden;
+    }
+    .gauge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #facc15, #ef4444);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Queue cards */
+    .queue-card {
+      background: var(--card-bg);
+      padding: 2rem 2.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 160px;
+      transition: background 0.2s;
+    }
+    .queue-card:hover { background: #111009; }
+    .queue-label { font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.6rem; }
+    .queue-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .queue-timeline { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--dim); margin-top: 0.5rem; }
+
+    /* ── About ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      margin-top: 3rem;
+    }
+    .about-headline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+    .about-headline span { color: var(--gold); }
+    .about-body {
+      font-size: 0.8rem;
+      line-height: 2;
+      color: var(--muted);
+    }
+    .about-body p + p { margin-top: 1rem; }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); margin-top: 0.4rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 100%;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      color: var(--white);
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      cursor: none;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--dim); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .hero { padding: 0 1.5rem 4rem; }
+      .hero-sub { flex-direction: column; align-items: flex-start; }
+      section { padding: 5rem 1.5rem; }
+      .sprint-main { grid-template-columns: 1fr; gap: 2rem; }
+      .sprint-grid { grid-template-columns: 1fr; }
+      .sprint-main { grid-column: span 1; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+      .footer-links { justify-content: center; }
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">BABYLON<span>.</span></a>
+    <div class="nav-status">
+      <span class="pulse-dot"></span>
+      DAY 4 OF 60 — SPRINT 1
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="hero-counter">BABYLON TECHNOLOGIES — VENTURE STUDIO — EST. 2026</div>
+    <h1 class="hero-headline">
+      Building<br />
+      <em>the future</em><br />
+      in public.
+    </h1>
+    <div class="hero-sub">
+      <p class="hero-desc">
+        6 production-grade AI products.<br />
+        60 days. No fluff. Just code.<br />
+        Watch every commit happen in real time.
+      </p>
+      <div class="hero-cta">
+        <a href="#sprint" class="btn-primary">VIEW SPRINT 1</a>
+        <a href="https://github.com/Psukhe777" target="_blank" class="btn-ghost">GITHUB ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item">SPRINT 1 — RISKLEX / CLAUSE</span>
+      <span class="ticker-item">AI LEGAL SCANNER</span>
+      <span class="ticker-item">GROQ + LLAMA3</span>
+      <span class="ticker-item">BUILDING IN PUBLIC</span>
+      <span class="ticker-item">60 DAY SPRINT</span>
+      <span class="ticker-item">BABYLONTECH.ORG</span>
+      <span class="ticker-item">SPRINT 1 — RISKLEX / CLAUSE</span>
+      <span class="ticker-item">AI LEGAL SCANNER</span>
+      <span class="ticker-item">GROQ + LLAMA3</span>
+      <span class="ticker-item">BUILDING IN PUBLIC</span>
+      <span class="ticker-item">60 DAY SPRINT</span>
+      <span class="ticker-item">BABYLONTECH.ORG</span>
+    </div>
+  </div>
+
+  <!-- Sprint Section -->
+  <section id="sprint">
+    <div class="section-label">// ACTIVE SPRINT - In development</div>
+    <div class="sprint-grid">
+
+      <!-- Main product card -->
+      <div class="sprint-main">
+        <div>
+          <div class="sprint-badge">
+            <span class="pulse-dot"></span>
+            LIVE — SPRINT 01 OF 06
+          </div>
+          <h2 class="sprint-title">CLAUSE ⚖️</h2>
+          <p class="sprint-desc">
+            An AI safety gauge for predatory legal contracts.<br />
+            Paste any TOS or contract. Get a risk score, flagged clauses,<br />
+            and plain-English explanations — in seconds.
+          </p>
+          <div class="sprint-links">
+            <a href="https://github.com/Psukhe777/LexRisk" target="_blank" class="btn-primary">VIEW SOURCE ↗</a>
+            <a href="https://github.com/Psukhe777" target="_blank" class="btn-ghost">GITHUB PROFILE</a>
+          </div>
+        </div>
+        <div class="sprint-meta">
+          <div class="meta-item">
+            <div class="meta-label">RISK DETECTION</div>
+            <div class="meta-value gold">LIVE</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">POWERED BY</div>
+            <div class="meta-value">GROQ + LLAMA3</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">SPRINT PROGRESS</div>
+            <div class="gauge-wrap">
+              <div class="meta-value" id="dayCount">DAY 1</div>
+              <div class="gauge-bar">
+                <div class="gauge-fill" id="gauge"></div>
+              </div>
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">CATEGORIES FLAGGED</div>
+            <div class="meta-value">ARBITRATION · AUTO-RENEW · DATA RIGHTS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Queue cards -->
+      <div class="queue-card">
+        <div>
+          <div class="queue-label">SPRINT 02</div>
+          <div class="queue-name">Chairfill</div>
+        </div>
+        <div class="queue-timeline">STARTS DAY 11</div>
+      </div>
+
+      <div class="queue-card">
+        <div>
+          <div class="queue-label">SPRINT 03 — FINANCE</div>
+          <div class="queue-name">Exit</div>
+        </div>
+        <div class="queue-timeline">STARTS DAY 21</div>
+      </div>
+
+      <div class="queue-card">
+        <div>
+          <div class="queue-label">SPRINT 04 — GAMING</div>
+          <div class="queue-name">Strike</div>
+        </div>
+        <div class="queue-timeline">STARTS DAY 31</div>
+      </div>
+
+      <div class="queue-card">
+        <div>
+          <div class="queue-label">SPRINT 05</div>
+          <div class="queue-name">TBD</div>
+        </div>
+        <div class="queue-timeline">STARTS DAY 41</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="section-label">// THE MISSION</div>
+    <div class="about-grid">
+      <div>
+        <h2 class="about-headline">
+          A studio built<br />on <span>velocity</span><br />and craft.
+        </h2>
+        <div class="about-stats">
+          <div>
+            <div class="stat-num">6</div>
+            <div class="stat-label">AI PRODUCTS</div>
+          </div>
+          <div>
+            <div class="stat-num">60</div>
+            <div class="stat-label">DAYS TO SHIP</div>
+          </div>
+          <div>
+            <div class="stat-num">1</div>
+            <div class="stat-label">BUILDER</div>
+          </div>
+          <div>
+            <div class="stat-num">0</div>
+            <div class="stat-label">FLUFF</div>
+          </div>
+        </div>
+      </div>
+      <div class="about-body">
+        <p>
+          Babylon Technologies is an AI venture studio running a public 60-day
+          sprint to ship 6 production-grade products from zero to live.
+        </p>
+        <p>
+          Every commit is public. Every decision documented. Every product
+          built to solve a real problem — starting with CLAUSE, an AI scanner
+          that decodes the predatory language buried in legal contracts most
+          people never read.
+        </p>
+        <p>
+          This is not a hackathon. This is a studio operating at elite pace,
+          in public, with the receipts on GitHub.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">BABYLON<span>.</span></div>
+    <div class="footer-links">
+      <a href="https://github.com/Psukhe777" target="_blank">GITHUB ↗</a>
+      <a href="https://github.com/Psukhe777/risklex" target="_blank">CLAUSE ↗</a>
+      <a href="#sprint">SPRINTS</a>
+      <a href="#about">ABOUT</a>
+    </div>
+    <div class="footer-copy">© 2025 BABYLONTECH.ORG</div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    (function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) *.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    })();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '56px'; ring.style.height = '56px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '10px'; cursor.style.height = '10px';
+        ring.style.width = '36px'; ring.style.height = '36px';
+      });
+    });
+
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Gauge animation on scroll
+    const gauge = document.getElementById('gauge');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          // Day 1 of 10 (sprint is 10 days)
+          gauge.style.width = '10%';
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(document.getElementById('sprint'));
+
+    // Day counter (days since Feb 15 2026 or just hardcode Day 1)
+    const start = new Date('2026-02-15T00:00:00Z');
+    const now = new Date();
+    const day = Math.min(Math.max(1, Math.floor((now - start) / 86400000)), 60);
+    document.getElementById('dayCount').textContent = `DAY ${day} / 60`;
+    gauge.style.width = `${(day / 60) * 100}%`;
+  </script>
+</body>
+</html>
+  
