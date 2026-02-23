@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -27,9 +27,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--black);
       color: var(--white);
@@ -40,23 +38,17 @@
 
     /* ── Custom Cursor ── */
     .cursor {
-      position: fixed;
-      width: 10px; height: 10px;
-      background: var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
+      position: fixed; width: 10px; height: 10px;
+      background: var(--gold); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
       transform: translate(-50%, -50%);
       transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
       mix-blend-mode: difference;
     }
     .cursor-ring {
-      position: fixed;
-      width: 36px; height: 36px;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
+      position: fixed; width: 36px; height: 36px;
+      border: 1px solid var(--gold); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
       transform: translate(-50%, -50%);
       transition: transform 0.12s ease, width 0.3s ease, height 0.3s ease, opacity 0.4s ease;
       opacity: 0.5;
@@ -64,51 +56,143 @@
 
     /* ── Grain overlay ── */
     body::before {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.032;
-      pointer-events: none;
-      z-index: 1000;
+      opacity: 0.032; pointer-events: none; z-index: 1000;
     }
 
-    /* ── Nav ── */
+    /* ── Navigation ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 1.5rem 3rem;
-      z-index: 100;
+      padding: 1.5rem 3rem; z-index: 100;
       border-bottom: 1px solid transparent;
       transition: border-color 0.4s, background 0.4s;
     }
     nav.scrolled {
       border-color: var(--border);
-      background: rgba(6,6,8,0.92);
+      background: rgba(6, 6, 8, 0.95);
       backdrop-filter: blur(12px);
     }
     .nav-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: 0.1em;
-      color: var(--white);
-      text-decoration: none;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.1rem; letter-spacing: 0.1em;
+      color: var(--white); text-decoration: none; z-index: 101;
     }
     .nav-logo span { color: var(--gold); }
+    
+    .nav-menu { display: flex; align-items: center; gap: 2rem; }
+    .nav-link {
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.3s; cursor: pointer;
+      background: none; border: none;
+      font-family: 'DM Mono', monospace; padding: 0;
+    }
+    .nav-link:hover { color: var(--gold); }
+    .nav-link.active { color: var(--gold); position: relative; }
+    .nav-link.active::after {
+      content: ''; position: absolute;
+      bottom: -0.5rem; left: 0; right: 0;
+      height: 2px; background: var(--gold);
+    }
+
+    /* Dropdown */
+    .nav-dropdown { position: relative; }
+    .dropdown-toggle { display: flex; align-items: center; gap: 0.3rem; }
+    .dropdown-toggle .arrow { font-size: 0.6rem; transition: transform 0.3s; }
+    .nav-dropdown:hover .arrow { transform: rotate(180deg); }
+    .dropdown-content {
+      position: absolute; top: 100%; left: 0; margin-top: 1rem;
+      background: rgba(13, 12, 10, 0.98);
+      border: 1px solid var(--border); border-radius: 8px;
+      min-width: 200px; opacity: 0; visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .nav-dropdown:hover .dropdown-content {
+      opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    .dropdown-content a {
+      display: block; padding: 0.75rem 1.25rem;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      color: var(--muted); text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      border-bottom: 1px solid var(--border);
+    }
+    .dropdown-content a:last-child { border-bottom: none; }
+    .dropdown-content a:hover { background: var(--border); color: var(--gold); }
+
+    /* Mobile Menu */
+    .hamburger {
+      display: none; flex-direction: column; gap: 0.4rem;
+      background: none; border: none; cursor: pointer;
+      padding: 0.5rem; z-index: 101;
+    }
+    .hamburger span {
+      width: 24px; height: 2px; background: var(--white);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+    
+    .mobile-menu {
+      position: fixed; top: 0; right: -100%;
+      width: 320px; height: 100vh;
+      background: var(--black);
+      border-left: 1px solid var(--border);
+      z-index: 100;
+      transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+    .mobile-menu.active { right: 0; }
+    .mobile-menu-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem; border-bottom: 1px solid var(--border);
+    }
+    .mobile-logo {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.1rem; letter-spacing: 0.1em; color: var(--white);
+    }
+    .mobile-logo span { color: var(--gold); }
+    .close-btn {
+      background: none; border: none; color: var(--white);
+      font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+      line-height: 1; transition: color 0.3s;
+    }
+    .close-btn:hover { color: var(--gold); }
+    .mobile-menu-content { padding: 2rem 0; }
+    .mobile-link {
+      display: block; padding: 1rem 1.5rem;
+      font-size: 0.85rem; letter-spacing: 0.1em;
+      color: var(--muted); text-decoration: none;
+      transition: background 0.2s, color 0.2s, padding-left 0.2s;
+      border-left: 3px solid transparent;
+    }
+    .mobile-link:hover {
+      background: rgba(201, 168, 76, 0.05);
+      color: var(--gold); border-left-color: var(--gold);
+      padding-left: 2rem;
+    }
+    .mobile-link.sub { padding-left: 2.5rem; font-size: 0.75rem; }
+    .mobile-section-title {
+      padding: 1.5rem 1.5rem 0.5rem;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      color: var(--dim); text-transform: uppercase;
+    }
+
     .nav-status {
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 0.35rem 0.9rem;
-      border-radius: 100px;
+      font-size: 0.65rem; letter-spacing: 0.15em;
+      color: var(--muted); border: 1px solid var(--border);
+      padding: 0.35rem 0.9rem; border-radius: 100px;
       display: flex; align-items: center; gap: 0.5rem;
     }
     .pulse-dot {
-      width: 5px; height: 5px;
-      background: #4ade80;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
+      width: 5px; height: 5px; background: #4ade80;
+      border-radius: 50%; animation: pulse 2s infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -117,21 +201,16 @@
 
     /* ── Hero ── */
     .hero {
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      justify-content: flex-end;
-      padding: 0 3rem 5rem;
-      position: relative;
-      overflow: hidden;
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 0 3rem 5rem;
+      position: relative; overflow: hidden;
     }
-
     .hero-bg {
       position: absolute; inset: 0;
       background:
         radial-gradient(ellipse 60% 50% at 80% 20%, rgba(201,168,76,0.07) 0%, transparent 60%),
         radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,168,76,0.04) 0%, transparent 50%);
     }
-
     .hero-grid {
       position: absolute; inset: 0;
       background-image:
@@ -141,69 +220,41 @@
       mask-image: radial-gradient(ellipse 80% 60% at 50% 100%, black 0%, transparent 70%);
       opacity: 0.4;
     }
-
     .hero-counter {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: var(--gold);
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.2s forwards;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      color: var(--gold); margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
     }
-
     .hero-headline {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: clamp(3.5rem, 9vw, 9rem);
-      line-height: 0.92;
-      letter-spacing: -0.03em;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.9s ease 0.35s forwards;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(3.5rem, 9vw, 9rem); line-height: 0.92;
+      letter-spacing: -0.03em; margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.9s ease 0.35s forwards;
     }
-    .hero-headline em {
-      font-style: normal;
-      color: var(--gold);
-      display: block;
-    }
-
+    .hero-headline em { font-style: normal; color: var(--gold); display: block; }
     .hero-sub {
       display: flex; align-items: flex-end; justify-content: space-between;
-      gap: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.9s ease 0.55s forwards;
+      gap: 2rem; opacity: 0; animation: fadeUp 0.9s ease 0.55s forwards;
     }
     .hero-desc {
-      font-size: 0.85rem;
-      line-height: 1.8;
-      color: var(--muted);
-      max-width: 380px;
+      font-size: 0.85rem; line-height: 1.8;
+      color: var(--muted); max-width: 380px;
     }
-    .hero-cta {
-      display: flex; gap: 1rem; flex-shrink: 0;
-    }
+    .hero-cta { display: flex; gap: 1rem; flex-shrink: 0; }
     .btn-primary {
-      background: var(--gold);
-      color: var(--black);
+      background: var(--gold); color: var(--black);
       font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      padding: 0.9rem 2rem;
-      border-radius: 100px;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+      padding: 0.9rem 2rem; border-radius: 100px;
       text-decoration: none;
-      transition: background 0.2s, transform 0.2s;
-      cursor: none;
+      transition: background 0.2s, transform 0.2s; cursor: none;
     }
     .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
     .btn-ghost {
-      border: 1px solid var(--border);
-      color: var(--muted);
+      border: 1px solid var(--border); color: var(--muted);
       font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      padding: 0.9rem 2rem;
-      border-radius: 100px;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      padding: 0.9rem 2rem; border-radius: 100px;
       text-decoration: none;
       transition: border-color 0.2s, color 0.2s, transform 0.2s;
       cursor: none;
@@ -219,197 +270,194 @@
     .ticker-wrap {
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      overflow: hidden;
-      padding: 0.9rem 0;
-      background: var(--card-bg);
+      overflow: hidden; padding: 0.9rem 0; background: var(--card-bg);
     }
-    .ticker {
-      display: flex; gap: 4rem;
-      animation: ticker 20s linear infinite;
-      width: max-content;
-    }
+    .ticker { display: flex; gap: 4rem; animation: ticker 20s linear infinite; width: max-content; }
     @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     .ticker-item {
-      font-size: 0.65rem;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-      white-space: nowrap;
+      font-size: 0.65rem; letter-spacing: 0.18em;
+      color: var(--muted); white-space: nowrap;
       display: flex; align-items: center; gap: 1rem;
     }
     .ticker-item::before { content: '◆'; color: var(--gold); font-size: 0.4rem; }
 
-    /* ── Section ── */
-    section {
-      padding: 7rem 3rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
+    /* ── Sections ── */
+    section { padding: 7rem 3rem; max-width: 1200px; margin: 0 auto; }
     .section-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: var(--gold);
-      margin-bottom: 1rem;
-      text-transform: uppercase;
+      font-size: 0.6rem; letter-spacing: 0.25em;
+      color: var(--gold); margin-bottom: 1rem; text-transform: uppercase;
     }
 
-    /* ── Sprint / Active product ── */
+    /* ── Sprint Grid ── */
     .sprint-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      margin-top: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5px; background: var(--border);
+      border: 1px solid var(--border); margin-top: 3rem;
     }
-
     .sprint-main {
-      background: var(--card-bg);
-      padding: 3rem;
-      grid-column: span 2;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
+      background: var(--card-bg); padding: 3rem;
+      grid-column: span 2; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
     }
-
     .sprint-badge {
       display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--gold);
+      font-size: 0.6rem; letter-spacing: 0.2em; color: var(--gold);
       border: 1px solid rgba(201,168,76,0.3);
-      padding: 0.3rem 0.8rem;
-      border-radius: 100px;
-      margin-bottom: 1.5rem;
+      padding: 0.3rem 0.8rem; border-radius: 100px; margin-bottom: 1.5rem;
     }
-
     .sprint-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      line-height: 1;
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1;
+      letter-spacing: -0.03em; margin-bottom: 1rem;
     }
-
     .sprint-desc {
-      font-size: 0.8rem;
-      line-height: 1.9;
-      color: var(--muted);
-      margin-bottom: 2rem;
+      font-size: 0.8rem; line-height: 1.9;
+      color: var(--muted); margin-bottom: 2rem;
     }
-
-    .sprint-links {
-      display: flex; gap: 1rem; flex-wrap: wrap;
-    }
-
-    .sprint-meta {
-      display: flex; flex-direction: column; gap: 1.5rem;
-    }
-
+    .sprint-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .sprint-meta { display: flex; flex-direction: column; gap: 1.5rem; }
     .meta-item { border-left: 2px solid var(--dim); padding-left: 1.2rem; }
     .meta-label { font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.3rem; }
     .meta-value { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--white); }
     .meta-value.gold { color: var(--gold); }
 
-    /* Risk gauge */
+    /* Gauge */
     .gauge-wrap { margin-top: 1rem; }
     .gauge-bar {
-      height: 3px;
-      background: var(--dim);
-      border-radius: 2px;
-      margin-top: 0.4rem;
-      overflow: hidden;
+      height: 3px; background: var(--dim);
+      border-radius: 2px; margin-top: 0.4rem; overflow: hidden;
     }
     .gauge-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #4ade80, #facc15, #ef4444);
-      border-radius: 2px;
-      width: 0%;
+      height: 100%; background: linear-gradient(90deg, #4ade80, #facc15, #ef4444);
+      border-radius: 2px; width: 0%;
       transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     /* Queue cards */
     .queue-card {
-      background: var(--card-bg);
-      padding: 2rem 2.5rem;
+      background: var(--card-bg); padding: 2rem 2.5rem;
       display: flex; flex-direction: column; justify-content: space-between;
-      min-height: 160px;
-      transition: background 0.2s;
+      min-height: 160px; transition: background 0.2s;
     }
     .queue-card:hover { background: #111009; }
     .queue-label { font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.6rem; }
     .queue-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: 'Syne', sans-serif; font-size: 1.6rem;
+      font-weight: 700; letter-spacing: -0.02em;
     }
     .queue-timeline { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--dim); margin-top: 0.5rem; }
 
-    /* ── About ── */
+    /* ── Pricing Section ── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2rem; margin-top: 3rem;
+    }
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 2.5rem;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative;
+    }
+    .pricing-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+    }
+    .pricing-card.featured {
+      border-color: var(--gold);
+      box-shadow: 0 0 40px rgba(201, 168, 76, 0.15);
+    }
+    .pricing-badge {
+      position: absolute; top: -12px; right: 20px;
+      background: var(--gold); color: var(--black);
+      font-size: 0.6rem; letter-spacing: 0.15em;
+      padding: 0.4rem 1rem; border-radius: 100px;
+      font-weight: 600;
+    }
+    .price-tag {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem; font-weight: 800;
+      color: var(--gold); line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .price-tag span { font-size: 1.5rem; color: var(--muted); }
+    .pricing-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem; margin-bottom: 1.5rem;
+    }
+    .pricing-card ul {
+      list-style: none; margin: 2rem 0;
+    }
+    .pricing-card li {
+      padding: 0.6rem 0; color: var(--muted);
+      font-size: 0.8rem; line-height: 1.6;
+    }
+    .pricing-card li::before {
+      content: '✓'; color: var(--gold);
+      margin-right: 0.8rem; font-weight: 700;
+    }
+
+    /* ── About Builder Section ── */
     .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: center;
-      margin-top: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center; margin-top: 3rem;
     }
     .about-headline {
       font-family: 'Syne', sans-serif;
       font-size: clamp(2rem, 4vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
+      font-weight: 800; line-height: 1.1; letter-spacing: -0.03em;
     }
     .about-headline span { color: var(--gold); }
     .about-body {
-      font-size: 0.8rem;
-      line-height: 2;
-      color: var(--muted);
+      font-size: 0.8rem; line-height: 2; color: var(--muted);
     }
     .about-body p + p { margin-top: 1rem; }
     .about-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-top: 3rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2rem; margin-top: 3rem;
     }
     .stat-num {
       font-family: 'Syne', sans-serif;
-      font-size: 3rem;
-      font-weight: 800;
-      color: var(--gold);
-      line-height: 1;
+      font-size: 3rem; font-weight: 800;
+      color: var(--gold); line-height: 1;
     }
     .stat-label { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--muted); margin-top: 0.4rem; }
+
+    /* ── Social Links ── */
+    .social-links {
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      margin-top: 2rem; padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .social-link {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .social-link:hover { color: var(--gold); }
+    .social-icon {
+      width: 20px; height: 20px;
+      fill: currentColor;
+    }
 
     /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
       padding: 2.5rem 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       max-width: 100%;
     }
     .footer-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 0.9rem;
-      letter-spacing: 0.1em;
-      color: var(--white);
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 0.9rem; letter-spacing: 0.1em; color: var(--white);
     }
     .footer-logo span { color: var(--gold); }
     .footer-links { display: flex; gap: 2rem; }
     .footer-links a {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-      cursor: none;
+      font-size: 0.65rem; letter-spacing: 0.1em;
+      color: var(--muted); text-decoration: none;
+      transition: color 0.2s; cursor: none;
     }
     .footer-links a:hover { color: var(--gold); }
     .footer-copy { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--dim); }
@@ -417,6 +465,9 @@
     /* ── Responsive ── */
     @media (max-width: 768px) {
       nav { padding: 1.2rem 1.5rem; }
+      .nav-menu { display: none; }
+      .hamburger { display: flex; }
+      .nav-status { display: none; }
       .hero { padding: 0 1.5rem 4rem; }
       .hero-sub { flex-direction: column; align-items: flex-start; }
       section { padding: 5rem 1.5rem; }
@@ -424,10 +475,14 @@
       .sprint-grid { grid-template-columns: 1fr; }
       .sprint-main { grid-column: span 1; }
       .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .pricing-grid { grid-template-columns: 1fr; }
       footer { flex-direction: column; gap: 1.5rem; text-align: center; }
       .footer-links { justify-content: center; }
       body { cursor: auto; }
       .cursor, .cursor-ring { display: none; }
+    }
+    @media (max-width: 480px) {
+      .mobile-menu { width: 100%; }
     }
   </style>
 </head>
@@ -436,25 +491,62 @@
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- Nav -->
+  <!-- Navigation -->
   <nav id="nav">
-    <a href="#" class="nav-logo">BABYLON<span>.</span></a>
+    <a href="/" class="nav-logo">BABYLON<span>.</span></a>
+    
+    <div class="nav-menu">
+        <a href="#sprint" class="nav-link">Products</a>
+        <div class="nav-dropdown">
+            <button class="nav-link dropdown-toggle">
+                Resources <span class="arrow">▾</span>
+            </button>
+            <div class="dropdown-content">
+                <a href="#about">Mission</a>
+                <a href="#about-builder">The Builder</a>
+                <a href="#pricing">Pricing</a>
+                <a href="https://github.com/Psukhe777" target="_blank">GitHub ↗</a>
+                <a href="https://lexrisk.streamlit.app" target="_blank">Try CLAUSE ↗</a>
+            </div>
+        </div>
+        <a href="mailto:nehemiah@babylontech.org" class="nav-link">Contact</a>
+    </div>
+    
+    <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+    </button>
+    
     <div class="nav-status">
-      <span class="pulse-dot"></span>
-      DAY 4 OF 60 — SPRINT 1
+        <span class="pulse-dot"></span>
+        DAY 8 OF 60 — SPRINT 1
     </div>
   </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <span class="mobile-logo">BABYLON<span>.</span></span>
+        <button class="close-btn" id="closeMenu">✕</button>
+    </div>
+    <div class="mobile-menu-content">
+        <a href="#sprint" class="mobile-link">Products</a>
+        <div class="mobile-section-title">Resources</div>
+        <a href="#about" class="mobile-link sub">Mission</a>
+        <a href="#about-builder" class="mobile-link sub">The Builder</a>
+        <a href="#pricing" class="mobile-link sub">Pricing</a>
+        <a href="https://github.com/Psukhe777" target="_blank" class="mobile-link sub">GitHub ↗</a>
+        <a href="https://lexrisk.streamlit.app" target="_blank" class="mobile-link sub">Try CLAUSE ↗</a>
+        <a href="mailto:nehemiah@babylontech.org" class="mobile-link">Contact</a>
+    </div>
+  </div>
 
   <!-- Hero -->
   <div class="hero">
     <div class="hero-bg"></div>
     <div class="hero-grid"></div>
-
     <div class="hero-counter">BABYLON TECHNOLOGIES — VENTURE STUDIO — EST. 2026</div>
     <h1 class="hero-headline">
-      Building<br />
-      <em>the future</em><br />
-      in public.
+      Building<br /><em>the future</em><br />in public.
     </h1>
     <div class="hero-sub">
       <p class="hero-desc">
@@ -472,13 +564,13 @@
   <!-- Ticker -->
   <div class="ticker-wrap">
     <div class="ticker">
-      <span class="ticker-item">SPRINT 1 — RISKLEX / CLAUSE</span>
+      <span class="ticker-item">SPRINT 1 — LEXRISK / CLAUSE</span>
       <span class="ticker-item">AI LEGAL SCANNER</span>
       <span class="ticker-item">GROQ + LLAMA3</span>
       <span class="ticker-item">BUILDING IN PUBLIC</span>
       <span class="ticker-item">60 DAY SPRINT</span>
       <span class="ticker-item">BABYLONTECH.ORG</span>
-      <span class="ticker-item">SPRINT 1 — RISKLEX / CLAUSE</span>
+      <span class="ticker-item">SPRINT 1 — LEXRISK / CLAUSE</span>
       <span class="ticker-item">AI LEGAL SCANNER</span>
       <span class="ticker-item">GROQ + LLAMA3</span>
       <span class="ticker-item">BUILDING IN PUBLIC</span>
@@ -487,12 +579,10 @@
     </div>
   </div>
 
-  <!-- Sprint Section -->
+  <!-- Active Sprint -->
   <section id="sprint">
-    <div class="section-label">// ACTIVE SPRINT - In development</div>
+    <div class="section-label">// ACTIVE SPRINT - IN DEVELOPMENT</div>
     <div class="sprint-grid">
-
-      <!-- Main product card -->
       <div class="sprint-main">
         <div>
           <div class="sprint-badge">
@@ -506,8 +596,8 @@
             and plain-English explanations — in seconds.
           </p>
           <div class="sprint-links">
-            <a href="https://github.com/Psukhe777/LexRisk" target="_blank" class="btn-primary">VIEW SOURCE ↗</a>
-            <a href="https://github.com/Psukhe777" target="_blank" class="btn-ghost">GITHUB PROFILE</a>
+            <a href="https://lexrisk.streamlit.app" target="_blank" class="btn-primary">TRY IT FREE ↗</a>
+            <a href="https://github.com/Psukhe777/LexRisk" target="_blank" class="btn-ghost">VIEW SOURCE</a>
           </div>
         </div>
         <div class="sprint-meta">
@@ -522,7 +612,7 @@
           <div class="meta-item">
             <div class="meta-label">SPRINT PROGRESS</div>
             <div class="gauge-wrap">
-              <div class="meta-value" id="dayCount">DAY 1</div>
+              <div class="meta-value" id="dayCount">DAY 8 / 60</div>
               <div class="gauge-bar">
                 <div class="gauge-fill" id="gauge"></div>
               </div>
@@ -535,7 +625,6 @@
         </div>
       </div>
 
-      <!-- Queue cards -->
       <div class="queue-card">
         <div>
           <div class="queue-label">SPRINT 02</div>
@@ -543,7 +632,6 @@
         </div>
         <div class="queue-timeline">STARTS DAY 11</div>
       </div>
-
       <div class="queue-card">
         <div>
           <div class="queue-label">SPRINT 03 — FINANCE</div>
@@ -551,7 +639,6 @@
         </div>
         <div class="queue-timeline">STARTS DAY 21</div>
       </div>
-
       <div class="queue-card">
         <div>
           <div class="queue-label">SPRINT 04 — GAMING</div>
@@ -559,7 +646,6 @@
         </div>
         <div class="queue-timeline">STARTS DAY 31</div>
       </div>
-
       <div class="queue-card">
         <div>
           <div class="queue-label">SPRINT 05</div>
@@ -567,11 +653,55 @@
         </div>
         <div class="queue-timeline">STARTS DAY 41</div>
       </div>
-
     </div>
   </section>
 
-  <!-- About -->
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="section-label">// PRICING</div>
+    <h2 class="about-headline">Simple, Transparent Pricing</h2>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="pricing-card">
+        <div class="price-tag">$0</div>
+        <h3>Free</h3>
+        <ul>
+          <li>3 PDF analyses/day</li>
+          <li>5 pages per PDF</li>
+          <li>Unlimited text paste</li>
+          <li>4 demo contracts</li>
+        </ul>
+        <a href="https://lexrisk.streamlit.app" target="_blank" class="btn-primary" style="display:inline-block;width:100%;text-align:center;">Start Free</a>
+      </div>
+      <!-- Pro -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">MOST POPULAR</div>
+        <div class="price-tag">$9<span>/mo</span></div>
+        <h3>Pro</h3>
+        <ul>
+          <li>50 PDF analyses/day</li>
+          <li>20 pages per PDF</li>
+          <li>Save & export results</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="mailto:nehemiah@babylontech.org?subject=Pro%20Plan%20Inquiry" class="btn-primary" style="display:inline-block;width:100%;text-align:center;">Coming Soon</a>
+      </div>
+      <!-- Business -->
+      <div class="pricing-card">
+        <div class="price-tag">$29<span>/mo</span></div>
+        <h3>Business</h3>
+        <ul>
+          <li>Unlimited PDFs</li>
+          <li>Unlimited pages</li>
+          <li>API access</li>
+          <li>Team sharing</li>
+        </ul>
+        <a href="mailto:nehemiah@babylontech.org?subject=Business%20Plan%20Inquiry" class="btn-primary" style="display:inline-block;width:100%;text-align:center;">Contact Sales</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission -->
   <section id="about">
     <div class="section-label">// THE MISSION</div>
     <div class="about-grid">
@@ -580,22 +710,10 @@
           A studio built<br />on <span>velocity</span><br />and craft.
         </h2>
         <div class="about-stats">
-          <div>
-            <div class="stat-num">6</div>
-            <div class="stat-label">AI PRODUCTS</div>
-          </div>
-          <div>
-            <div class="stat-num">60</div>
-            <div class="stat-label">DAYS TO SHIP</div>
-          </div>
-          <div>
-            <div class="stat-num">1</div>
-            <div class="stat-label">BUILDER</div>
-          </div>
-          <div>
-            <div class="stat-num">0</div>
-            <div class="stat-label">FLUFF</div>
-          </div>
+          <div><div class="stat-num">6</div><div class="stat-label">AI PRODUCTS</div></div>
+          <div><div class="stat-num">60</div><div class="stat-label">DAYS TO SHIP</div></div>
+          <div><div class="stat-num">1</div><div class="stat-label">BUILDER</div></div>
+          <div><div class="stat-num">0</div><div class="stat-label">FLUFF</div></div>
         </div>
       </div>
       <div class="about-body">
@@ -617,16 +735,99 @@
     </div>
   </section>
 
+  <!-- The Builder -->
+  <section id="about-builder">
+    <div class="section-label">// THE BUILDER</div>
+    <div class="about-grid">
+      <div class="about-body">
+        <h2 class="about-headline">From <span>Rock Bottom</span> to Production Code.</h2>
+        <p style="margin-top: 1.5rem;">
+          In 2025, I lost everything. Job loss and homelessness became my reality after failing the SIE exam. 
+          I wrote <em>Memoirs of a Tramp</em> as a record of that journey—not as a tragedy, but as a fuel source.
+        </p>
+        <p>
+          Today, I am a Data Science student (Class of 2026) and the founder of Babylon Technologies. 
+          LexRisk is the first step in a 60-day sprint to prove that high-utility AI isn't just for big tech—it's 
+          for the individuals who need a shield against the fine print.
+        </p>
+        
+        <!-- Social Links -->
+        <div class="social-links">
+          <a href="https://x.com/Nebu_exe" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            X (Twitter)
+          </a>
+          <a href="https://youtube.com/@Psukhe.C" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            YouTube
+          </a>
+          <a href="https://tiktok.com/@nebuh" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+            </svg>
+            TikTok
+          </a>
+          <a href="https://medium.com/@nehemiah.exe" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/>
+            </svg>
+            Medium
+          </a>
+          <a href="mailto:nehemiah@babylontech.org" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            Email
+          </a>
+          <a href="tel:+15204626961" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            (520) 462-6961
+          </a>
+        </div>
+        
+        <div class="hero-cta" style="margin-top: 2rem;">
+          <a href="https://github.com/Psukhe777" target="_blank" class="btn-primary">FOLLOW THE JOURNEY</a>
+        </div>
+      </div>
+      <div class="sprint-meta">
+        <div class="meta-item">
+          <div class="meta-label">CURRENT FOCUS</div>
+          <div class="meta-value">DATA SCIENCE & CYBERSECURITY</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">ACADEMIC TIMELINE</div>
+          <div class="meta-value gold">GRADUATING OCT 2026</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">STATUS</div>
+          <div class="meta-value">BUILDING IN PUBLIC</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">CONTACT</div>
+          <div class="meta-value" style="font-size:0.9rem;">nehemiah@babylontech.org</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer>
     <div class="footer-logo">BABYLON<span>.</span></div>
     <div class="footer-links">
       <a href="https://github.com/Psukhe777" target="_blank">GITHUB ↗</a>
-      <a href="https://github.com/Psukhe777/risklex" target="_blank">CLAUSE ↗</a>
-      <a href="#sprint">SPRINTS</a>
+      <a href="https://lexrisk.streamlit.app" target="_blank">CLAUSE ↗</a>
+      <a href="#sprint">PRODUCTS</a>
+      <a href="#pricing">PRICING</a>
       <a href="#about">ABOUT</a>
+      <a href="mailto:nehemiah@babylontech.org">CONTACT</a>
     </div>
-    <div class="footer-copy">© 2025 BABYLONTECH.ORG</div>
+    <div class="footer-copy">© 2026 BABYLONTECH.ORG</div>
   </footer>
 
   <script>
@@ -638,14 +839,14 @@
     document.addEventListener('mousemove', e => {
       mx = e.clientX; my = e.clientY;
       cursor.style.left = mx + 'px';
-      cursor.style.top  = my + 'px';
+      cursor.style.top = my + 'px';
     });
 
     (function animateRing() {
       rx += (mx - rx) * 0.12;
-      ry += (my - ry) *.12;
+      ry += (my - ry) * 0.12;
       ring.style.left = rx + 'px';
-      ring.style.top  = ry + 'px';
+      ring.style.top = ry + 'px';
       requestAnimationFrame(animateRing);
     })();
 
@@ -660,25 +861,85 @@
       });
     });
 
-    // Nav scroll
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
+    // Navigation
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMenu = document.getElementById('closeMenu');
+
+    hamburger?.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
     });
 
-    // Gauge animation on scroll
+    closeMenu?.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offset = 80;
+          const targetPosition = target.offsetTop - offset;
+          window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Active section highlighting
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (scrollY >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').includes(current)) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Gauge animation
     const gauge = document.getElementById('gauge');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) {
-          // Day 1 of 10 (sprint is 10 days)
-          gauge.style.width = '10%';
+          gauge.style.width = '13.3%'; // Day 8 of 60
         }
       });
     }, { threshold: 0.3 });
     observer.observe(document.getElementById('sprint'));
 
-    // Day counter (days since Feb 15 2026 or just hardcode Day 1)
+    // Day counter
     const start = new Date('2026-02-15T00:00:00Z');
     const now = new Date();
     const day = Math.min(Math.max(1, Math.floor((now - start) / 86400000)), 60);
@@ -687,4 +948,3 @@
   </script>
 </body>
 </html>
-  
